@@ -13,20 +13,16 @@ import os
 L.seed_everything(42, workers=True)
 torch.set_float32_matmul_precision("medium")
 os.environ["NO_ALBUMENTATIONS_UPDATE"]="1"
+os.environ["HYDRA_FULL_ERROR"]="1"
 warnings.filterwarnings("ignore")
 
 @hydra.main(config_path="config", config_name="overfit_config", version_base=None)
 def main(cfg):
     logger = loggers.TensorBoardLogger("logs/", name=str(cfg.run_name))
-
     model = instantiate(cfg.model.object)
+
     if cfg.img_size == "derived":
-        # Only derive image size for EfficientNet models
-        if hasattr(model, 'model_name'):
-            img_size = get_efficientnet_image_size(model.model_name)
-        else:
-            # Default image size for other models like UNet
-            img_size = 224
+        img_size = get_efficientnet_image_size(model.model_name)
     else:
         img_size = cfg.img_size
 
@@ -43,12 +39,14 @@ def main(cfg):
     trainer = instantiate(cfg.trainer, logger=logger)
 
     # if efficientnetb5, b6, or b7, use binsearch to find the largest batch size
-    if hasattr(model, 'model_name') and model.model_name in ["efficientnet-b5", "efficientnet-b6", "efficientnet-b7"]:
+    if cfg.model.object.model_name in ["efficientnet-b5", "efficientnet-b6", "efficientnet-b7"]:
         tuner = Tuner(trainer)
         tuner.scale_batch_size(net, dataset, mode="binsearch")
     
     trainer.fit(net, dataset)
     trainer.test(net, dataset)
+
+
 
 
 if __name__ == "__main__":
