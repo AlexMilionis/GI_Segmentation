@@ -1,0 +1,4 @@
+name: unet
+object:
+  _target_: models.unet.UNet
+  model_name: ${model_name}
