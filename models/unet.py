@@ -3,19 +3,22 @@ import torch.nn as nn
 
 
 class UNet(nn.Module):
-    def __init__(self, config):
+    def __init__(self, model_name="unet", spatial_dims=2, in_channels=3, classes=1, 
+                 channels=[64, 128, 256, 512, 1024], strides=[2, 2, 2, 2], 
+                 num_res_units=0, norm='batch', activation='relu', dropout=0, 
+                 bias=True, deep_supervision=False):
         super().__init__()
-        self.spatial_dims = 2
-        self.in_channels = 3
-        self.classes = 1
-        self.channels = [64, 128, 256, 512, 1024]
-        self.strides = [2, 2, 2, 2] 
-        self.num_res_units = 0
-        self.norm = 'batch'
-        self.activation = 'relu'
-        self.dropout = 0 #0.1
-        self.bias = True
-        self.deep_supervision = False
+        self.model_name = model_name
+        self.spatial_dims = spatial_dims
+        self.in_channels = in_channels
+        self.classes = classes
+        self.channels = channels
+        self.strides = strides
+        self.num_res_units = num_res_units
+        self.norm = norm
+        self.activation = activation
+        self.dropout = dropout
+        self.bias = bias
         self.model = self._build_model()
 
 
