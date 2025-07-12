@@ -3,7 +3,32 @@ import numpy as np
 from typing import List, Union
 import torch
 
-def visualization_grid(images, masks, predicted_masks):
+def visualization_input():
+    """
+    Placeholder function for future input handling.
+    Currently not used but can be extended to handle different input formats.
+    """
+    pass
+
+def _assemble_grid_elements(prediction_outputs):
+    # Extract and concatenate results from all batches
+    all_images = []
+    all_masks = []
+    all_predictions = []
+    
+    for batch_result in prediction_outputs:
+        all_images.append(batch_result['images'])
+        all_masks.append(batch_result['masks'])
+        all_predictions.append(batch_result['predictions'])
+    
+    # Concatenate all batches
+    images = torch.cat(all_images, dim=0)
+    masks = torch.cat(all_masks, dim=0)
+    predicted_masks = torch.cat(all_predictions, dim=0)
+    return images, masks, predicted_masks
+
+
+def visualization_grid(prediction_outputs, samples_to_visualize=5):
     """
     Creates an Nx3 grid visualization where N is the number of samples
     and 3 columns represent: original image, ground truth mask, predicted mask
@@ -17,13 +42,20 @@ def visualization_grid(images, masks, predicted_masks):
         matplotlib figure object
     """
     # Convert tensors to numpy arrays if needed
+
+    images, masks, predicted_masks = _assemble_grid_elements(prediction_outputs)
+
     if torch.is_tensor(images):
         images = images.cpu().numpy()
     if torch.is_tensor(masks):
         masks = masks.cpu().numpy()
     if torch.is_tensor(predicted_masks):
         predicted_masks = predicted_masks.cpu().numpy()
-    
+
+    images = images[:samples_to_visualize]
+    masks = masks[:samples_to_visualize]
+    predicted_masks = predicted_masks[:samples_to_visualize]
+
     # Get number of samples
     n_samples = len(images)
     
@@ -36,6 +68,9 @@ def visualization_grid(images, masks, predicted_masks):
     
     # Column titles
     titles = ['Original Image', 'Ground Truth Mask', 'Predicted Mask']
+
+    mean = np.array([0.5543, 0.3644, 0.2777])
+    std = np.array([0.2840, 0.2101, 0.1770])
     
     for i in range(n_samples):
         # Original image
@@ -45,6 +80,10 @@ def visualization_grid(images, masks, predicted_masks):
                 img_display = np.transpose(images[i], (1, 2, 0))
             else:  # (H, W, C) format
                 img_display = images[i]
+
+            # Denormalize the image
+            img_display = img_display * std + mean
+            img_display = np.clip(img_display, 0, 1)
         else:
             # Grayscale image
             img_display = images[i]

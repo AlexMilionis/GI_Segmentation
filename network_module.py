@@ -76,7 +76,7 @@ class Net(L.LightningModule):
 
         return loss
     
-    def prediction_step(self, batch, batch_idx):
+    def predict_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
         preds = (torch.sigmoid(logits) > 0.5).long()

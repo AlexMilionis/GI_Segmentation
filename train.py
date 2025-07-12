@@ -9,7 +9,7 @@ from datamodule import KvasirSEGDataset
 from network_module import Net
 import warnings
 import os
-from visualize_results import visualization_grid
+from visualize_results import visualization_grid, assemble_grid_elements
 
 L.seed_everything(42, workers=True)
 torch.set_float32_matmul_precision("medium")
@@ -46,14 +46,11 @@ def main(cfg):
     
     trainer.fit(net, dataset)
     trainer.test(net, dataset)
-    images, masks, predicted_masks = trainer.predict()
+    prediction_outputs = trainer.predict(net, dataset)
     
     # Create and log visualization grid
-    N = 5 
-    fig = visualization_grid(images[:N], masks[:N], predicted_masks[:N])
-    logger.experiment.add_figure("Predictions Grid", fig, global_step=trainer.global_step)
-
-
+    logger.experiment.add_figure("Prediction Grid", fig, global_step=trainer.global_step)
+    fig = visualization_grid(prediction_outputs, samples_to_visualize=5)
 
 if __name__ == "__main__":
     main()
