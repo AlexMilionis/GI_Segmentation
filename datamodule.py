@@ -124,7 +124,7 @@ class KvasirSEGDataset(L.LightningDataModule):
         test_masks = [os.path.join(self.root_dir, "test/masks", mask) for mask in test_masks]
 
         train_pairs = list(zip(train_images, train_masks))[:5]
-        print(f"train pairs: {train_pairs}")
+        # print(f"train pairs: {train_pairs}")
         # val_pairs = list(zip(val_images, val_masks))[:10]
         # test_pairs = list(zip(test_images, test_masks))[:10]
 
@@ -155,3 +155,12 @@ class KvasirSEGDataset(L.LightningDataModule):
             shuffle=False,
             num_workers=self.num_workers,
         )
+    
+    def predict_dataloader(self):
+        return DataLoader(
+            self.test_set,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers,
+        )
+
