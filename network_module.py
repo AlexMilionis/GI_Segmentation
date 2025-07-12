@@ -75,6 +75,16 @@ class Net(L.LightningModule):
         self.get_precision(preds, y)
 
         return loss
+    
+    def prediction_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self(x)
+        preds = (torch.sigmoid(logits) > 0.5).long()
+        return {
+            'images': x,
+            'masks': y,
+            'predictions': preds
+        }
 
     def on_validation_epoch_end(self):
         dice = self.get_dice.aggregate().item()
