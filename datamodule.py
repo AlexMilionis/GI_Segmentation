@@ -95,8 +95,12 @@ class KvasirSEGDataset(L.LightningDataModule):
             [
                 A.Resize(*(self.img_size, self.img_size), interpolation=cv2.INTER_LANCZOS4),
                 A.Normalize(
+                    # # ImageNet normalization (Kvasir-SEG)
                     mean=(0.485, 0.456, 0.406),
                     std=(0.229, 0.224, 0.225),
+                    # Custom normalization for PolypGen
+                    # mean=(0.5543, 0.3644, 0.2777),
+                    # std=(0.2840, 0.2101, 0.1770),
                     max_pixel_value=255,
                 ),
                 ToTensorV2(),
