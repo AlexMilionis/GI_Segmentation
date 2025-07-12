@@ -7,17 +7,17 @@ from monai import metrics as mm
 class Net(L.LightningModule):
     def __init__(self, model, criterion, optimizer, lr, scheduler=None):
         super().__init__()
+        
         self.model = model
 
         self.get_dice = mm.DiceMetric(include_background=False, reduction="mean")
-        self.get_iou = mm.MeanIoU(include_background=False)
+        self.get_iou = mm.MeanIoU(include_background=False, reduction="mean")
         self.get_recall = mm.ConfusionMatrixMetric(
             include_background=False, metric_name="sensitivity"
         )
         self.get_precision = mm.ConfusionMatrixMetric(
             include_background=False, metric_name="precision"
         )
-
         self.criterion = criterion
         self.optimizer = optimizer
         self.scheduler = scheduler
@@ -39,15 +39,6 @@ class Net(L.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
 
-        if self.model.deep_supervision:
-            logits, logits_aux = self(x)
-
-            aux_loss = sum(self.criterion(z, y) for z in logits_aux)
-            loss = (self.criterion(logits, y) + aux_loss) / (1 + len(logits_aux))
-
-            self.log("train_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
-            return loss
-
         logits = self(x)
         loss = self.criterion(logits, y)
         self.log("train_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -57,11 +48,7 @@ class Net(L.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
 
-        if self.model.deep_supervision:
-            logits, _ = self(x)
-        else:
-            logits = self(x)
-
+        logits = self(x)
         loss = self.criterion(logits, y)
         self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
@@ -77,11 +64,7 @@ class Net(L.LightningModule):
     def test_step(self, batch, batch_idx):
         x, y = batch
 
-        if self.model.deep_supervision:
-            logits, _ = self(x)
-        else:
-            logits = self(x)
-
+        logits = self(x)
         loss = self.criterion(logits, y)
         self.log("test_loss", loss, prog_bar=True, logger=True)
 
