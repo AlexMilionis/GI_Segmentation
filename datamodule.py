@@ -25,6 +25,15 @@ class KvasirSEGDatagen(Dataset):
             transformed = self.transform(image=image, mask=mask)
             image = transformed["image"]
             mask = transformed["mask"]
+
+        image_shape = image.shape
+        # After ToTensorV2, image has shape [C, H, W], so check H == W (indices 1 and 2)
+        if image_shape[1] != image_shape[2]:
+            raise ValueError(f"Image shape mismatch: {image_shape}. Expected square images.")
+        
+        mask_shape = mask.shape
+        if mask_shape[0] != mask_shape[1]:
+            raise ValueError(f"Mask shape mismatch: {mask_shape}. Expected square masks.")
         
         return image, mask.long().unsqueeze(0)
 
@@ -96,11 +105,11 @@ class KvasirSEGDataset(L.LightningDataModule):
                 A.Resize(*(self.img_size, self.img_size), interpolation=cv2.INTER_LANCZOS4),
                 A.Normalize(
                     # # ImageNet normalization (Kvasir-SEG)
-                    mean=(0.485, 0.456, 0.406),
-                    std=(0.229, 0.224, 0.225),
+                    # mean=(0.485, 0.456, 0.406),
+                    # std=(0.229, 0.224, 0.225),
                     # Custom normalization for PolypGen
-                    # mean=(0.5543, 0.3644, 0.2777),
-                    # std=(0.2840, 0.2101, 0.1770),
+                    mean=(0.5543, 0.3644, 0.2777),
+                    std=(0.2840, 0.2101, 0.1770),
                     max_pixel_value=255,
                 ),
                 ToTensorV2(),
@@ -109,28 +118,52 @@ class KvasirSEGDataset(L.LightningDataModule):
 
     def setup(self, stage=None):
         train_images = os.listdir(os.path.join(self.root_dir, "train/images"))
-        train_masks = os.listdir(os.path.join(self.root_dir, "train/masks"))
+        # train_masks = sorted(os.listdir(os.path.join(self.root_dir, "train/masks")))
+        train_masks = []
+        for img in train_images:
+            base = img.split(".")[0]
+            train_masks.append(base + "_mask.jpg")
         train_images = [os.path.join(self.root_dir, "train/images", img) for img in train_images]
         train_masks = [os.path.join(self.root_dir, "train/masks", mask) for mask in train_masks]
 
-        val_images = os.listdir(os.path.join(self.root_dir, "validation/images"))
-        val_masks = os.listdir(os.path.join(self.root_dir, "validation/masks"))
+        val_images = sorted(os.listdir(os.path.join(self.root_dir, "validation/images")))
+        # val_masks = sorted(os.listdir(os.path.join(self.root_dir, "validation/masks")))
+        val_masks = []
+        for img in val_images:
+            base = img.split(".")[0]
+            val_masks.append(base + "_mask.jpg")
         val_images = [os.path.join(self.root_dir, "validation/images", img) for img in val_images]
         val_masks = [os.path.join(self.root_dir, "validation/masks", mask) for mask in val_masks]
 
-        test_images = os.listdir(os.path.join(self.root_dir, "test/images"))
-        test_masks = os.listdir(os.path.join(self.root_dir, "test/masks"))
+        test_images = sorted(os.listdir(os.path.join(self.root_dir, "test/images")))
+        # test_masks = sorted(os.listdir(os.path.join(self.root_dir, "test/masks")))
+        test_masks = []
+        for img in test_images:
+            base = img.split(".")[0]
+            test_masks.append(base + "_mask.jpg")
         test_images = [os.path.join(self.root_dir, "test/images", img) for img in test_images]
         test_masks = [os.path.join(self.root_dir, "test/masks", mask) for mask in test_masks]
 
-        train_pairs = list(zip(train_images, train_masks))[:5]
+        train_pairs = list(zip(train_images, train_masks))
         # print(f"train pairs: {train_pairs}")
-        # val_pairs = list(zip(val_images, val_masks))[:10]
-        # test_pairs = list(zip(test_images, test_masks))[:10]
+        val_pairs = list(zip(val_images, val_masks))
+        test_pairs = list(zip(test_images, test_masks))
 
-        self.train_set = KvasirSEGDatagen(train_pairs, transform=self.get_val_transforms())
-        self.val_set = KvasirSEGDatagen(train_pairs, transform=self.get_val_transforms())
-        self.test_set = KvasirSEGDatagen(train_pairs, transform=self.get_val_transforms())
+        for img, mask in train_pairs:
+            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+            
+        for img, mask in val_pairs:
+            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+            
+        for img, mask in test_pairs:
+            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+
+        self.train_set = KvasirSEGDatagen(train_pairs, transform=self.get_train_transforms())
+        self.val_set = KvasirSEGDatagen(val_pairs, transform=self.get_val_transforms())
+        self.test_set = KvasirSEGDatagen(test_pairs, transform=self.get_test_transforms())
 
     def train_dataloader(self):
         return DataLoader(
