@@ -144,10 +144,18 @@ class KvasirSEGDataset(L.LightningDataModule):
         test_images = [os.path.join(self.root_dir, "test/images", img) for img in test_images]
         test_masks = [os.path.join(self.root_dir, "test/masks", mask) for mask in test_masks]
 
+        pred_images = sorted(os.listdir(os.path.join(self.root_dir, "prediction/images")))
+        pred_masks = []
+        for img in pred_images:
+            base = img.split(".")[0]
+            pred_masks.append(base + "_mask.jpg")
+        pred_images = [os.path.join(self.root_dir, "prediction/images", img) for img in pred_images]
+        pred_masks = [os.path.join(self.root_dir, "prediction/masks", mask) for mask in pred_masks]
+
         train_pairs = list(zip(train_images, train_masks))
-        # print(f"train pairs: {train_pairs}")
         val_pairs = list(zip(val_images, val_masks))
         test_pairs = list(zip(test_images, test_masks))
+        pred_pairs = list(zip(pred_images, pred_masks))
 
         for img, mask in train_pairs:
             if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
@@ -160,10 +168,15 @@ class KvasirSEGDataset(L.LightningDataModule):
         for img, mask in test_pairs:
             if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
                 raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+        
+        for img, mask in pred_pairs:
+            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                raise ValueError(f"Image and mask names do not match: {img} vs {mask}") 
 
         self.train_set = KvasirSEGDatagen(train_pairs, transform=self.get_train_transforms())
         self.val_set = KvasirSEGDatagen(val_pairs, transform=self.get_val_transforms())
         self.test_set = KvasirSEGDatagen(test_pairs, transform=self.get_test_transforms())
+        self.pred_set = KvasirSEGDatagen(pred_pairs, transform=self.get_test_transforms())
 
     def train_dataloader(self):
         return DataLoader(
@@ -191,7 +204,7 @@ class KvasirSEGDataset(L.LightningDataModule):
     
     def predict_dataloader(self):
         return DataLoader(
-            self.test_set,
+            self.pred_set,
             batch_size=self.batch_size,
             shuffle=False,
             num_workers=self.num_workers,
