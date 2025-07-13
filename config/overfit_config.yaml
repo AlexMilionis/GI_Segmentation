@@ -4,7 +4,7 @@ defaults:
   - scheduler: cosine
   - _self_
 
-run_name: ${model.object.model_name}_${model.object.ch}
+run_name: ${model.object.model_name}_${model.object.ch}_overfit
 
 trainer:
   _target_: lightning.pytorch.Trainer

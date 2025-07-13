@@ -4,7 +4,7 @@ defaults:
   - scheduler: cosine
   - _self_
   
-run_name: ${model.object.model_name}_overfit
+run_name: ${model.object.model_name}
 
 trainer:
   _target_: lightning.pytorch.Trainer
@@ -19,8 +19,6 @@ criterion:
   include_background: True
   sigmoid: True
 
-scheduler: null
-
 model_name: unet
 spatial_dims: 2
 in_channels: 3
@@ -30,7 +28,7 @@ strides: [2, 2, 2, 2]
 num_res_units: 0
 norm: 'batch'
 activation: 'relu'
-dropout: 0 #0.1
+dropout: 0.1
 bias: False
 img_size: 224
 batch_size: 5
