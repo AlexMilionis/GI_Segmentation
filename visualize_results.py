@@ -2,13 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-def visualization_input():
-    """
-    Placeholder function for future input handling.
-    Currently not used but can be extended to handle different input formats.
-    """
-    pass
-
 def _assemble_grid_elements(prediction_outputs):
     # Extract and concatenate results from all batches
     all_images = []
@@ -27,21 +20,9 @@ def _assemble_grid_elements(prediction_outputs):
     return images, masks, predicted_masks
 
 
-def visualization_grid(prediction_outputs, samples_to_visualize=5):
-    """
-    Creates an Nx3 grid visualization where N is the number of samples
-    and 3 columns represent: original image, ground truth mask, predicted mask
+def visualization_grid(prediction_outputs):
     
-    Args:
-        images: List or tensor of images
-        masks: List or tensor of ground truth masks
-        predicted_masks: List or tensor of predicted masks
-    
-    Returns:
-        matplotlib figure object
-    """
     # Convert tensors to numpy arrays if needed
-
     images, masks, predicted_masks = _assemble_grid_elements(prediction_outputs)
 
     if torch.is_tensor(images):
@@ -51,18 +32,13 @@ def visualization_grid(prediction_outputs, samples_to_visualize=5):
     if torch.is_tensor(predicted_masks):
         predicted_masks = predicted_masks.cpu().numpy()
 
-    images = images[:samples_to_visualize]
-    masks = masks[:samples_to_visualize]
-    predicted_masks = predicted_masks[:samples_to_visualize]
-
-    # Get number of samples
-    n_samples = len(images)
+    samples_to_visualize = len(images)
     
     # Create figure with subplots
-    fig, axes = plt.subplots(n_samples, 3, figsize=(12, 4 * n_samples))
+    fig, axes = plt.subplots(samples_to_visualize, 3, figsize=(12, 4 * samples_to_visualize))
     
     # Handle case where there's only one sample
-    if n_samples == 1:
+    if samples_to_visualize == 1:
         axes = axes.reshape(1, -1)
     
     # Column titles
@@ -71,7 +47,7 @@ def visualization_grid(prediction_outputs, samples_to_visualize=5):
     mean = np.array([0.5543, 0.3644, 0.2777])
     std = np.array([0.2840, 0.2101, 0.1770])
     
-    for i in range(n_samples):
+    for i in range(samples_to_visualize):
         # Original image
         if images[i].ndim == 3:
             # Handle RGB images (H, W, C) or (C, H, W)
