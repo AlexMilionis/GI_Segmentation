@@ -89,15 +89,15 @@ def main(cfg):
     #     scheduler=cfg.scheduler,
     # )
 
-    # net, optimal_lr = tune_hyperparameters(cfg, trainer, net, dataset, model)
+    net, optimal_lr = tune_hyperparameters(cfg, trainer, net, dataset, model)
 
     trainer.fit(net, dataset)
     trainer.test(net, dataset)
     prediction_outputs = trainer.predict(net, dataset)
     
     # Create and log visualization grid
-    total_samples = sum(batch['images'].shape[0] for batch in prediction_outputs)
-    print(f"Total samples to visualize: {total_samples}")
+    # total_samples = sum(batch['images'].shape[0] for batch in prediction_outputs)
+    # print(f"Total samples to visualize: {total_samples}")
     fig = visualization_grid(prediction_outputs)
     logger.experiment.add_figure("Prediction Grid", fig, global_step=trainer.global_step)
 
