@@ -89,7 +89,8 @@ def main(cfg):
     #     scheduler=cfg.scheduler,
     # )
 
-    net, optimal_lr = tune_hyperparameters(cfg, trainer, net, dataset, model)
+    # net, lr_figure = tune_hyperparameters(cfg, trainer, net, dataset, model)
+    # logger.experiment.add_figure("LR Finder", lr_figure, global_step=0)
 
     trainer.fit(net, dataset)
     trainer.test(net, dataset)

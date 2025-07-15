@@ -30,8 +30,11 @@ def tune_hyperparameters(cfg, trainer, net, dataset, model):
         scheduler=cfg.scheduler,
     )
 
+    fig = lr_finder.plot(suggest=True)
+    
+
     # Find optimal batch size
     # batch_size_finder = tuner.scale_batch_size(model=net, datamodule=dataset, mode="binsearch", ckpt_path=os.path.join(logger.log_dir, "batch_size_finder.ckpt"))
     # print(f"Optimal batch size: {batch_size_finder}")
 
-    return net, optimal_lr
+    return net, fig

@@ -73,8 +73,12 @@ class KvasirSEGDataset(L.LightningDataModule):
                 ),
                 A.ElasticTransform(p=0.5, interpolation=cv2.INTER_LANCZOS4),
                 A.Normalize(
-                    mean=(0.485, 0.456, 0.406),
-                    std=(0.229, 0.224, 0.225),
+                    # # ImageNet normalization (Kvasir-SEG)
+                    # mean=(0.485, 0.456, 0.406),
+                    # std=(0.229, 0.224, 0.225),
+                    # Custom normalization for PolypGen
+                    mean=(0.5543, 0.3644, 0.2777),
+                    std=(0.2840, 0.2101, 0.1770),
                     max_pixel_value=255,
                 ),
                 ToTensorV2(),
@@ -117,61 +121,88 @@ class KvasirSEGDataset(L.LightningDataModule):
         )
 
     def setup(self, stage=None):
-        train_images = os.listdir(os.path.join(self.root_dir, "train/images"))
-        # train_masks = sorted(os.listdir(os.path.join(self.root_dir, "train/masks")))
-        train_masks = []
-        for img in train_images:
-            base = img.split(".")[0]
-            train_masks.append(base + "_mask.jpg")
-        train_images = [os.path.join(self.root_dir, "train/images", img) for img in train_images]
-        train_masks = [os.path.join(self.root_dir, "train/masks", mask) for mask in train_masks]
+        if self.root_dir=="./PolypGen":
+            train_images = os.listdir(os.path.join(self.root_dir, "train/images"))
+            # train_masks = sorted(os.listdir(os.path.join(self.root_dir, "train/masks")))
+            train_masks = []
+            for img in train_images:
+                base = img.split(".")[0]
+                train_masks.append(base + "_mask.jpg")
+            train_images = [os.path.join(self.root_dir, "train/images", img) for img in train_images]
+            train_masks = [os.path.join(self.root_dir, "train/masks", mask) for mask in train_masks]
 
-        val_images = sorted(os.listdir(os.path.join(self.root_dir, "validation/images")))
-        # val_masks = sorted(os.listdir(os.path.join(self.root_dir, "validation/masks")))
-        val_masks = []
-        for img in val_images:
-            base = img.split(".")[0]
-            val_masks.append(base + "_mask.jpg")
-        val_images = [os.path.join(self.root_dir, "validation/images", img) for img in val_images]
-        val_masks = [os.path.join(self.root_dir, "validation/masks", mask) for mask in val_masks]
+            val_images = sorted(os.listdir(os.path.join(self.root_dir, "validation/images")))
+            # val_masks = sorted(os.listdir(os.path.join(self.root_dir, "validation/masks")))
+            val_masks = []
+            for img in val_images:
+                base = img.split(".")[0]
+                val_masks.append(base + "_mask.jpg")
+            val_images = [os.path.join(self.root_dir, "validation/images", img) for img in val_images]
+            val_masks = [os.path.join(self.root_dir, "validation/masks", mask) for mask in val_masks]
 
-        test_images = sorted(os.listdir(os.path.join(self.root_dir, "test/images")))
-        # test_masks = sorted(os.listdir(os.path.join(self.root_dir, "test/masks")))
-        test_masks = []
-        for img in test_images:
-            base = img.split(".")[0]
-            test_masks.append(base + "_mask.jpg")
-        test_images = [os.path.join(self.root_dir, "test/images", img) for img in test_images]
-        test_masks = [os.path.join(self.root_dir, "test/masks", mask) for mask in test_masks]
+            test_images = sorted(os.listdir(os.path.join(self.root_dir, "test/images")))
+            # test_masks = sorted(os.listdir(os.path.join(self.root_dir, "test/masks")))
+            test_masks = []
+            for img in test_images:
+                base = img.split(".")[0]
+                test_masks.append(base + "_mask.jpg")
+            test_images = [os.path.join(self.root_dir, "test/images", img) for img in test_images]
+            test_masks = [os.path.join(self.root_dir, "test/masks", mask) for mask in test_masks]
 
-        pred_images = sorted(os.listdir(os.path.join(self.root_dir, "prediction/images")))
-        pred_masks = []
-        for img in pred_images:
-            base = img.split(".")[0]
-            pred_masks.append(base + "_mask.jpg")
-        pred_images = [os.path.join(self.root_dir, "prediction/images", img) for img in pred_images]
-        pred_masks = [os.path.join(self.root_dir, "prediction/masks", mask) for mask in pred_masks]
+            pred_images = sorted(os.listdir(os.path.join(self.root_dir, "prediction/images")))
+            pred_masks = []
+            for img in pred_images:
+                base = img.split(".")[0]
+                pred_masks.append(base + "_mask.jpg")
+            pred_images = [os.path.join(self.root_dir, "prediction/images", img) for img in pred_images]
+            pred_masks = [os.path.join(self.root_dir, "prediction/masks", mask) for mask in pred_masks]
 
-        train_pairs = list(zip(train_images, train_masks))
-        val_pairs = list(zip(val_images, val_masks))
-        test_pairs = list(zip(test_images, test_masks))
-        pred_pairs = list(zip(pred_images, pred_masks))
+            train_pairs = list(zip(train_images, train_masks))
+            val_pairs = list(zip(val_images, val_masks))
+            test_pairs = list(zip(test_images, test_masks))
+            pred_pairs = list(zip(pred_images, pred_masks))
 
-        for img, mask in train_pairs:
-            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+            for img, mask in train_pairs:
+                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+                
+            for img, mask in val_pairs:
+                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+                
+            for img, mask in test_pairs:
+                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
             
-        for img, mask in val_pairs:
-            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
-            
-        for img, mask in test_pairs:
-            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
-        
-        for img, mask in pred_pairs:
-            if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                raise ValueError(f"Image and mask names do not match: {img} vs {mask}") 
+            for img, mask in pred_pairs:
+                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}") 
+                
+        elif self.root_dir=="./Kvasir-SEG":
+            train_images = os.listdir(os.path.join(self.root_dir, "train/images"))
+            train_masks = os.listdir(os.path.join(self.root_dir, "train/masks"))
+            train_images = [os.path.join(self.root_dir, "train/images", img) for img in train_images]
+            train_masks = [os.path.join(self.root_dir, "train/masks", mask) for mask in train_masks]
+
+            val_images = os.listdir(os.path.join(self.root_dir, "validation/images"))
+            val_masks = os.listdir(os.path.join(self.root_dir, "validation/masks"))
+            val_images = [os.path.join(self.root_dir, "validation/images", img) for img in val_images]
+            val_masks = [os.path.join(self.root_dir, "validation/masks", mask) for mask in val_masks]
+
+            test_images = os.listdir(os.path.join(self.root_dir, "test/images"))
+            test_masks = os.listdir(os.path.join(self.root_dir, "test/masks"))
+            test_images = [os.path.join(self.root_dir, "test/images", img) for img in test_images]
+            test_masks = [os.path.join(self.root_dir, "test/masks", mask) for mask in test_masks]
+
+            pred_images = os.listdir(os.path.join(self.root_dir, "prediction/images"))
+            pred_masks = os.listdir(os.path.join(self.root_dir, "prediction/masks"))
+            pred_images = [os.path.join(self.root_dir, "prediction/images", img) for img in pred_images]
+            pred_masks = [os.path.join(self.root_dir, "prediction/masks", mask) for mask in pred_masks]
+
+            train_pairs = list(zip(train_images, train_masks))
+            val_pairs = list(zip(val_images, val_masks))
+            test_pairs = list(zip(test_images, test_masks))
+            pred_pairs = list(zip(pred_images, pred_masks))
 
         self.train_set = KvasirSEGDatagen(train_pairs, transform=self.get_train_transforms())
         self.val_set = KvasirSEGDatagen(val_pairs, transform=self.get_val_transforms())

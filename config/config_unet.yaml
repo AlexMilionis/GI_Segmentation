@@ -32,7 +32,7 @@ dropout: 0.1
 bias: False
 img_size: 224
 batch_size: 16
-lr: 1e-3
+lr: 1e-4
 
 
 # Use if you want to sweep over multiple models
