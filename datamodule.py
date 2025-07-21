@@ -37,6 +37,9 @@ class KvasirSEGDatagen(Dataset):
         mask_shape = mask.shape
         if mask_shape[0] != mask_shape[1]:
             raise ValueError(f"Mask shape mismatch: {mask_shape}. Expected square masks.")
+        
+        print(f"Image path: {self.pairs[idx][0]}")
+        print(f"Mask path: {self.pairs[idx][1]}")
                 
         return image, mask.long().unsqueeze(0)
 
