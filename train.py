@@ -32,6 +32,8 @@ def main(cfg):
     
     dataset = KvasirSEGDataset(batch_size=cfg.batch_size, img_size=img_size)
 
+
+
     net = Net(
         model=model,
         criterion=instantiate(cfg.criterion),

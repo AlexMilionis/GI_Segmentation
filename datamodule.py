@@ -5,6 +5,7 @@ import cv2
 import lightning as L
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader, Dataset, random_split
+import json
 
 
 class KvasirSEGDatagen(Dataset):
@@ -21,6 +22,8 @@ class KvasirSEGDatagen(Dataset):
         mask = cv2.imread(self.pairs[idx][1], 0)
         mask = cv2.threshold(mask, 127, 1, cv2.THRESH_BINARY)[1]
 
+        print(type(image), type(mask))
+
         if self.transform is not None:
             transformed = self.transform(image=image, mask=mask)
             image = transformed["image"]
@@ -34,7 +37,7 @@ class KvasirSEGDatagen(Dataset):
         mask_shape = mask.shape
         if mask_shape[0] != mask_shape[1]:
             raise ValueError(f"Mask shape mismatch: {mask_shape}. Expected square masks.")
-        
+                
         return image, mask.long().unsqueeze(0)
 
 
@@ -158,8 +161,14 @@ class KvasirSEGDataset(L.LightningDataModule):
             pred_masks = [os.path.join(self.root_dir, "prediction/masks", mask) for mask in pred_masks]
 
             train_pairs = list(zip(train_images, train_masks))
+            with open(os.path.join(self.root_dir, "train_pairs.json"), "w") as f:
+                json.dump(train_pairs, f, indent=2)
             val_pairs = list(zip(val_images, val_masks))
+            with open(os.path.join(self.root_dir, "val_pairs.json"), "w") as f:
+                json.dump(val_pairs, f, indent=2)
             test_pairs = list(zip(test_images, test_masks))
+            with open(os.path.join(self.root_dir, "test_pairs.json"), "w") as f:
+                json.dump(test_pairs, f, indent=2)
             pred_pairs = list(zip(pred_images, pred_masks))
 
             for img, mask in train_pairs:
