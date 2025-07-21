@@ -113,14 +113,14 @@ class Net(L.LightningModule):
         self.get_precision.reset()
     
     def on_test_epoch_end(self):
-        dice = self.get_dice.aggregate().item()
-        iou = self.get_iou.aggregate().item()
-        accuracy = self.get_accuracy.aggregate().item()
+        dice = self.get_dice.aggregate()[0].item()
+        iou = self.get_iou.aggregate()[0].item()
+        accuracy = self.get_accuracy.aggregate()[0].item()
         recall = self.get_recall.aggregate()[0].item()
         precision = self.get_precision.aggregate()[0].item()
         f1 = 2 * (precision * recall) / (precision + recall + 1e-8)
         f2 = 5 * (precision * recall) / (4 * precision + recall + 1e-8)
-        hausdorff = self.get_hausdorff.aggregate().item()
+        hausdorff = self.get_hausdorff.aggregate()[0].item()
 
         self.log("test_dice", dice, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_iou", iou, on_step=False, on_epoch=True, prog_bar=True, logger=True)
