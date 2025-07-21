@@ -22,7 +22,7 @@ class KvasirSEGDatagen(Dataset):
         mask = cv2.imread(self.pairs[idx][1], 0)
         mask = cv2.threshold(mask, 127, 1, cv2.THRESH_BINARY)[1]
 
-        print(type(image), type(mask))
+        # print(type(image), type(mask))
 
         if self.transform is not None:
             transformed = self.transform(image=image, mask=mask)
@@ -38,8 +38,8 @@ class KvasirSEGDatagen(Dataset):
         if mask_shape[0] != mask_shape[1]:
             raise ValueError(f"Mask shape mismatch: {mask_shape}. Expected square masks.")
         
-        print(f"Image path: {self.pairs[idx][0]}")
-        print(f"Mask path: {self.pairs[idx][1]}")
+        # print(f"Image path: {self.pairs[idx][0]}")
+        # print(f"Mask path: {self.pairs[idx][1]}")
                 
         return image, mask.long().unsqueeze(0)
 
