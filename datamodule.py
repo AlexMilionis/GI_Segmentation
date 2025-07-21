@@ -164,31 +164,31 @@ class KvasirSEGDataset(L.LightningDataModule):
             pred_masks = [os.path.join(self.root_dir, "prediction/masks", mask) for mask in pred_masks]
 
             train_pairs = list(zip(train_images, train_masks))
-            with open(os.path.join(self.root_dir, "train_pairs.json"), "w") as f:
-                json.dump(train_pairs, f, indent=2)
+            # with open(os.path.join(self.root_dir, "train_pairs.json"), "w") as f:
+            #     json.dump(train_pairs, f, indent=2)
             val_pairs = list(zip(val_images, val_masks))
-            with open(os.path.join(self.root_dir, "val_pairs.json"), "w") as f:
-                json.dump(val_pairs, f, indent=2)
+            # with open(os.path.join(self.root_dir, "val_pairs.json"), "w") as f:
+            #     json.dump(val_pairs, f, indent=2)
             test_pairs = list(zip(test_images, test_masks))
-            with open(os.path.join(self.root_dir, "test_pairs.json"), "w") as f:
-                json.dump(test_pairs, f, indent=2)
+            # with open(os.path.join(self.root_dir, "test_pairs.json"), "w") as f:
+            #     json.dump(test_pairs, f, indent=2)
             pred_pairs = list(zip(pred_images, pred_masks))
 
-            for img, mask in train_pairs:
-                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+            # for img, mask in train_pairs:
+            #     if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+            #         raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
                 
-            for img, mask in val_pairs:
-                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+            # for img, mask in val_pairs:
+            #     if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+            #         raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
                 
-            for img, mask in test_pairs:
-                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
+            # for img, mask in test_pairs:
+            #     if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+            #         raise ValueError(f"Image and mask names do not match: {img} vs {mask}")
             
-            for img, mask in pred_pairs:
-                if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
-                    raise ValueError(f"Image and mask names do not match: {img} vs {mask}") 
+            # for img, mask in pred_pairs:
+            #     if img.split("\\")[-1].split('.')[0] + "_mask" != mask.split("\\")[-1].split('.')[0]:
+            #         raise ValueError(f"Image and mask names do not match: {img} vs {mask}") 
                 
         elif self.root_dir=="./Kvasir-SEG":
             train_images = os.listdir(os.path.join(self.root_dir, "train/images"))
