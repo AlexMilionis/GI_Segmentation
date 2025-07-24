@@ -13,6 +13,9 @@ import warnings
 import os
 from hyperparameter_tuning import tune_hyperparameters
 from visualize_results import visualization_grid
+import matplotlib.pyplot as plt
+import torchvision
+import PIL.Image
 
 L.seed_everything(42, workers=True)
 torch.set_float32_matmul_precision("medium")
@@ -99,10 +102,16 @@ def main(cfg):
     prediction_outputs = trainer.predict(net, dataset)
     
     # Create and log visualization grid
-    # total_samples = sum(batch['images'].shape[0] for batch in prediction_outputs)
-    # print(f"Total samples to visualize: {total_samples}")
     fig = visualization_grid(prediction_outputs)
-    logger.experiment.add_figure("Prediction Grid", fig, global_step=trainer.global_step)
+    fig_path = os.path.join(logger.log_dir, "prediction_grid.png")
+    fig.savefig(fig_path)
+    plt.close(fig) 
+    # logger.experiment.add_figure("Prediction Grid", fig, global_step=trainer.global_step)
+
+    # image = PIL.Image.open(fig_path)
+    # image = torchvision.transforms.ToTensor()(image)
+    # logger.experiment.add_image("Prediction Grid", image, global_step=trainer.global_step)
+
 
 if __name__ == "__main__":
     main()
