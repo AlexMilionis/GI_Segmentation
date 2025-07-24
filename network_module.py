@@ -15,7 +15,7 @@ class Net(L.LightningModule):
         self.get_accuracy = mm.ConfusionMatrixMetric(include_background=False, metric_name="accuracy")
         self.get_recall = mm.ConfusionMatrixMetric(include_background=False, metric_name="sensitivity")
         self.get_precision = mm.ConfusionMatrixMetric(include_background=False, metric_name="precision")
-        self.get_hausdorff = mm.HausdorffDistanceMetric(include_background=False, reduction="mean")
+        # self.get_hausdorff = mm.HausdorffDistanceMetric(include_background=False, reduction="mean")
 
 
         self.criterion = criterion
@@ -74,7 +74,7 @@ class Net(L.LightningModule):
         self.get_accuracy(preds, y)
         self.get_recall(preds, y)
         self.get_precision(preds, y)
-        self.get_hausdorff(preds, y)
+        # self.get_hausdorff(preds, y)
 
         return loss
     
@@ -120,7 +120,7 @@ class Net(L.LightningModule):
         precision = self.get_precision.aggregate()[0].item()
         f1 = 2 * (precision * recall) / (precision + recall + 1e-8)
         f2 = 5 * (precision * recall) / (4 * precision + recall + 1e-8)
-        hausdorff = self.get_hausdorff.aggregate()[0].item()
+        # hausdorff = self.get_hausdorff.aggregate()[0].item()
 
         self.log("test_dice", dice, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_iou", iou, on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -129,11 +129,11 @@ class Net(L.LightningModule):
         self.log("test_precision", precision, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_f1", f1, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_f2", f2, on_step=False, on_epoch=True, prog_bar=True, logger=True)
-        self.log("test_hausdorff", hausdorff, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        # self.log("test_hausdorff", hausdorff, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
         self.get_dice.reset()
         self.get_iou.reset()
         self.get_accuracy.reset()
         self.get_recall.reset()
         self.get_precision.reset()
-        self.get_hausdorff.reset()
+        # self.get_hausdorff.reset()
