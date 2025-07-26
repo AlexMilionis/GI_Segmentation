@@ -47,16 +47,16 @@ def main(cfg, load_existing=False):
     )
 
     trainer = instantiate(cfg.trainer, logger=logger, callbacks=[checkpoint_callback])
-    cfg = tune_hyperparameters(cfg, trainer, net, dataset, logger)
-    net.lr = cfg.lr
-    # Recreate the net with updated scheduler config
-    net = Net(
-        model=model,
-        criterion=instantiate(cfg.criterion),
-        optimizer=cfg.optimizer,
-        lr=cfg.lr,
-        scheduler=cfg.scheduler,
-    )
+    # cfg = tune_hyperparameters(cfg, trainer, net, dataset, logger)
+    # net.lr = cfg.lr
+    # # Recreate the net with updated scheduler config
+    # net = Net(
+    #     model=model,
+    #     criterion=instantiate(cfg.criterion),
+    #     optimizer=cfg.optimizer,
+    #     lr=cfg.lr,
+    #     scheduler=cfg.scheduler,
+    # )
 
     trainer.fit(net, dataset)
     trainer.test(net, dataset)
@@ -65,11 +65,10 @@ def main(cfg, load_existing=False):
     # Create and log visualization grid
     save_visualization_grid(prediction_outputs, logger.log_dir)
 
-    # save the configuration file in the logs directory
-    config_path = os.path.join(logger.log_dir, cfg.config_name)
-    with open(config_path, "w") as f:
-        f.write(cfg.pretty())
-
+    # # save the configuration file in the logs directory
+    # config_path = os.path.join(logger.log_dir, cfg.config_name)
+    # with open(config_path, "w") as f:
+    #     f.write(cfg.pretty())
 
 if __name__ == "__main__":
     main()
