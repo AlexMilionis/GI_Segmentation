@@ -16,7 +16,7 @@ def tune_hyperparameters(cfg, trainer, net, dataset, logger):
     #     # print(f"Run {i+1} suggested LR: {suggested_lrs[-1]}")
     # optimal_lr = np.exp(np.mean(np.log(suggested_lrs)))
     # print(f"Average suggested learning rate: {optimal_lr}")
-    lr_finder = tuner.lr_find(model=net, datamodule=dataset)
+    lr_finder = tuner.lr_find(model=net, datamodule=dataset, num_training=500)
     optimal_lr = lr_finder.suggestion()
     logger.experiment.add_scalar("Calculated Learning Rate", optimal_lr, 0)  # Logs at step 0
 

@@ -9,7 +9,7 @@ run_name: ${model.object.model_name}
 trainer:
   _target_: lightning.pytorch.Trainer
   accelerator: auto
-  max_epochs: 1
+  max_epochs: 300
   log_every_n_steps: 10000000000
   check_val_every_n_epoch: 1
   deterministic: warn
@@ -23,7 +23,7 @@ model_name: unet
 spatial_dims: 2
 in_channels: 3
 classes: 1
-channels: [32, 64, 128, 256, 512] #[64, 128, 256, 512, 1024]
+channels: [32, 64, 128, 256, 512]  #[64, 128, 256, 512, 1024]
 strides: [2, 2, 2, 2] 
 num_res_units: 0
 norm: 'batch'
@@ -32,7 +32,7 @@ dropout: 0.2
 bias: False
 img_size: 512
 batch_size: 16
-lr: 1.0 #1e-4
+lr: 1e-4
 
 
 # Use if you want to sweep over multiple models
