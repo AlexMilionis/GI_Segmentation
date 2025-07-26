@@ -65,6 +65,12 @@ def main(cfg, load_existing=False):
     # Create and log visualization grid
     save_visualization_grid(prediction_outputs, logger.log_dir)
 
+    # save the configuration file in the logs directory
+    config_filename = "config_unet.yaml"
+    config_path = os.path.join(logger.log_dir, config_filename)
+    with open(config_path, "w") as f:
+        f.write(cfg.pretty())
+
 
 if __name__ == "__main__":
     main()
