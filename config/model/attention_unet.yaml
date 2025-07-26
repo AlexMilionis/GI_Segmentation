@@ -1,0 +1,10 @@
+name: attention_unet
+object:
+  _target_: models.attention_unet.AttentionUnet
+  model_name: ${model_name}
+  spatial_dims: ${spatial_dims}
+  in_channels: ${in_channels}
+  classes: ${classes}
+  channels: ${channels}
+  strides: ${strides}
+  dropout: ${dropout}

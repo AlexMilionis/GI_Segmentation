@@ -66,8 +66,7 @@ def main(cfg, load_existing=False):
     save_visualization_grid(prediction_outputs, logger.log_dir)
 
     # save the configuration file in the logs directory
-    config_filename = "config_unet.yaml"
-    config_path = os.path.join(logger.log_dir, config_filename)
+    config_path = os.path.join(logger.log_dir, cfg.config_name)
     with open(config_path, "w") as f:
         f.write(cfg.pretty())
 
