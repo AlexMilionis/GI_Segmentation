@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
+import torch, os
 
 def _assemble_grid_elements(prediction_outputs):
     # Extract and concatenate results from all batches
@@ -20,8 +20,7 @@ def _assemble_grid_elements(prediction_outputs):
     return images, masks, predicted_masks
 
 
-def visualization_grid(prediction_outputs):
-    
+def _visualization_grid(prediction_outputs):
     # Convert tensors to numpy arrays if needed
     images, masks, predicted_masks = _assemble_grid_elements(prediction_outputs)
 
@@ -90,3 +89,8 @@ def visualization_grid(prediction_outputs):
     plt.tight_layout()
     return fig
 
+def save_visualization_grid(prediction_outputs, log_dir):
+    fig = _visualization_grid(prediction_outputs)
+    fig_path = os.path.join(log_dir, "prediction_grid.png")
+    fig.savefig(fig_path)
+    plt.close(fig) 
