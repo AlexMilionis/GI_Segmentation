@@ -5,7 +5,7 @@ import numpy as np
 from hydra.utils import instantiate
 from lightning.pytorch import loggers
 from lightning.pytorch.tuner import Tuner
-from monai.networks.nets.efficientnet import get_efficientnet_image_size
+# from monai.networks.nets.efficientnet import get_efficientnet_image_size
 from lightning.pytorch.callbacks import ModelCheckpoint
 from datamodule import KvasirSEGDataset
 from network_module import Net
@@ -23,7 +23,7 @@ warnings.filterwarnings("ignore")
 
 @hydra.main(config_path="config", config_name="config_unet", version_base=None)
 def main(cfg, load_existing=False):
-    logger = loggers.TensorBoardLogger("logs/", name=str(cfg.run_name))
+    logger = loggers.TensorBoardLogger("../logs/", name=str(cfg.run_name))
     model = instantiate(cfg.model.object)
     
     dataset = KvasirSEGDataset(batch_size=cfg.batch_size, img_size=cfg.img_size)
