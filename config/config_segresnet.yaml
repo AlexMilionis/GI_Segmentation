@@ -1,16 +1,16 @@
 defaults:
-  - model: unet
+  - model: segresnet
   - optimizer: adamw
   - scheduler: cosine
   - _self_
   
 run_name: ${model.object.model_name}
-config_name: config_unet.yaml
+config_name: config_segresnet.yaml
 
 trainer:
   _target_: lightning.pytorch.Trainer
   accelerator: auto
-  max_epochs: 300
+  max_epochs: 1
   log_every_n_steps: 10000000000
   check_val_every_n_epoch: 1
   deterministic: warn
@@ -20,17 +20,14 @@ criterion:
   include_background: True
   sigmoid: True
 
-model_name: unet
+model_name: config_segresnet
 spatial_dims: 2
+init_filters: 32
 in_channels: 3
 classes: 1
-channels: [64, 128, 256, 512, 1024]
-strides: [2, 2, 2, 2] 
-num_res_units: 0
+dropout_prob: 0.1
 norm: 'batch'
-activation: 'relu'
-dropout: 0.1
-bias: False
+
 img_size: 512
 batch_size: 16
 lr: 1e-4

@@ -1,0 +1,10 @@
+name: segresnet
+object:
+  _target_: models.segresnet.SegResNet
+  model_name: ${model_name}
+  spatial_dims: ${spatial_dims}
+  init_filters: ${init_filters}
+  in_channels: ${in_channels}
+  classes: ${classes}
+  dropout_prob: ${dropout_prob}
+  norm: ${norm}
