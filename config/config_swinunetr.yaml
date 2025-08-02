@@ -1,11 +1,11 @@
 defaults:
-  - model: segresnet
+  - model: swinunetr
   - optimizer: adamw
   - scheduler: cosine
   - _self_
   
 run_name: ${model.object.model_name}
-config_name: config_segresnet.yaml
+config_name: config_swinunetr.yaml
 
 trainer:
   _target_: lightning.pytorch.Trainer
@@ -20,18 +20,18 @@ criterion:
   include_background: True
   sigmoid: True
 
-model_name: segresnet
+model_name: swinunetr
 spatial_dims: 2
-init_filters: 32
 in_channels: 3
 classes: 1
-dropout_prob: 0.1
-norm: 'batch'
+feature_size: 48
+drop_rate: 0.1
+norm_name: batch
+use_checkpoint: True
 
 img_size: 512
 batch_size: 16
 lr: 1e-4
-
 
 # Use if you want to sweep over multiple models
 # hydra:
