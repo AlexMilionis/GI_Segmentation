@@ -9,7 +9,7 @@ run_name: ${model.object.model_name}_${model.object.ch}
 trainer:
   _target_: lightning.pytorch.Trainer
   accelerator: auto
-  max_epochs: 300
+  max_epochs: 1 #300
   log_every_n_steps: 10000000000
   check_val_every_n_epoch: 1
   deterministic: warn
@@ -23,8 +23,8 @@ ch: 32
 pretrained: True
 freeze_encoder: False
 deep_supervision: False
-model_name: efficientnet-b0
-img_size: derived
+model_name: efficientnet-b4 #efficientnet-b0
+img_size: 512 #derived
 batch_size: 16 #8
 lr: 1e-4
 

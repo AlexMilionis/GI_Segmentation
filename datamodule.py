@@ -4,7 +4,7 @@ import albumentations as A
 import cv2
 import lightning as L
 from albumentations.pytorch import ToTensorV2
-from torch.utils.data import DataLoader, Dataset, random_split
+from torch.utils.data import DataLoader, Dataset
 import json
 
 

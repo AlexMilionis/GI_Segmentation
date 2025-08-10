@@ -101,7 +101,8 @@ class EffiSegNetBN(nn.Module):
 
         self.deep_supervision = deep_supervision
 
-        upsampled_size = get_efficientnet_image_size(model_name)
+        # upsampled_size = get_efficientnet_image_size(model_name)
+        upsampled_size = 512
         self.up1 = nn.Upsample(size=upsampled_size, mode="nearest")
         self.up2 = nn.Upsample(size=upsampled_size, mode="nearest")
         self.up3 = nn.Upsample(size=upsampled_size, mode="nearest")
