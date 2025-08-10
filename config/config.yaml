@@ -20,7 +20,7 @@ criterion:
   sigmoid: True
 
 ch: 32
-pretrained: True
+pretrained: False #True
 freeze_encoder: False
 deep_supervision: False
 model_name: efficientnet-b4 #efficientnet-b0
