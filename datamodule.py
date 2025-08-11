@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 import json
 
 
-class KvasirSEGDatagen(Dataset):
+class PolypGenDatagen(Dataset):
     def __init__(self, pairs, transform=None):
         self.transform = transform
         self.pairs = pairs
@@ -44,7 +44,7 @@ class KvasirSEGDatagen(Dataset):
         return image, mask.long().unsqueeze(0)
 
 
-class KvasirSEGDataset(L.LightningDataModule):
+class PolypGenDataset(L.LightningDataModule):
     def __init__(
         self,
         batch_size=10,
@@ -216,10 +216,10 @@ class KvasirSEGDataset(L.LightningDataModule):
             test_pairs = list(zip(test_images, test_masks))
             pred_pairs = list(zip(pred_images, pred_masks))
 
-        self.train_set = KvasirSEGDatagen(train_pairs, transform=self.get_train_transforms())
-        self.val_set = KvasirSEGDatagen(val_pairs, transform=self.get_val_transforms())
-        self.test_set = KvasirSEGDatagen(test_pairs, transform=self.get_test_transforms())
-        self.pred_set = KvasirSEGDatagen(pred_pairs, transform=self.get_test_transforms())
+        self.train_set = PolypGenDatagen(train_pairs, transform=self.get_train_transforms())
+        self.val_set = PolypGenDatagen(val_pairs, transform=self.get_val_transforms())
+        self.test_set = PolypGenDatagen(test_pairs, transform=self.get_test_transforms())
+        self.pred_set = PolypGenDatagen(pred_pairs, transform=self.get_test_transforms())
 
     def train_dataloader(self):
         return DataLoader(
