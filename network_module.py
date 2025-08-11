@@ -47,7 +47,6 @@ class Net(L.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
-
         logits = self(x)
         loss = self.criterion(logits, y)
         self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -81,11 +80,13 @@ class Net(L.LightningModule):
     def predict_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
-        preds = (torch.sigmoid(logits) > 0.5).long()
+        probs = torch.sigmoid(logits)
+        preds = (probs > 0.5).long()
         return {
             'images': x,
             'masks': y,
-            'predictions': preds
+            'probabilities': probs,
+            'predictions': preds,
         }
 
     def on_validation_epoch_end(self):

@@ -7,7 +7,7 @@ from lightning.pytorch import loggers
 from lightning.pytorch.tuner import Tuner
 # from monai.networks.nets.efficientnet import get_efficientnet_image_size
 from lightning.pytorch.callbacks import ModelCheckpoint
-from datamodule import KvasirSEGDataset
+from datamodule import PolypGenDataset
 from network_module import Net
 import warnings
 import os
@@ -26,7 +26,7 @@ def main(cfg, load_existing=False):
     logger = loggers.TensorBoardLogger("../logs/", name=str(cfg.run_name))
     model = instantiate(cfg.model.object)
     
-    dataset = KvasirSEGDataset(batch_size=cfg.batch_size, img_size=cfg.img_size)
+    dataset = PolypGenDataset(batch_size=cfg.batch_size, img_size=cfg.img_size)
 
     net = Net(
         model=model,

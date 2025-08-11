@@ -19,7 +19,6 @@ def _assemble_grid_elements(prediction_outputs):
     predicted_masks = torch.cat(all_predictions, dim=0)
     return images, masks, predicted_masks
 
-
 def _visualization_grid(prediction_outputs):
     # Convert tensors to numpy arrays if needed
     images, masks, predicted_masks = _assemble_grid_elements(prediction_outputs)
