@@ -1,0 +1,10 @@
+name: unetr
+object:
+  _target_: models.unetr.UNETR
+  model_name: ${model_name}
+  spatial_dims: ${spatial_dims}
+  feature_size: ${feature_size}
+  in_channels: ${in_channels}
+  classes: ${classes}
+  dropout_rate: ${dropout_rate}
+  norm_name: ${norm_name}
