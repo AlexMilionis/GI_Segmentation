@@ -168,5 +168,5 @@ cython_debug/
 #.idea/
 
 outputs/
-
-linkedinpost.ipynb
+linkedin_post.ipynb
+lightning_logs/
