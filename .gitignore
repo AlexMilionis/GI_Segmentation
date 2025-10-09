@@ -168,6 +168,6 @@ cython_debug/
 #.idea/
 
 outputs/
-linkedin_post.ipynb
+linkedinpost.ipynb
 lightning_logs/
 testing.ipynb
