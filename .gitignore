@@ -170,3 +170,4 @@ cython_debug/
 outputs/
 linkedin_post.ipynb
 lightning_logs/
+testing.ipynb
